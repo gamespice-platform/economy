@@ -78,7 +78,7 @@ economy.rules = rules
 ```
 
 ```bash
-DOT_ECONOMY_START_MONEY=1000 godot --headless -- --economy-max-money=9000
+GS_ECONOMY_START_MONEY=1000 godot --headless -- --economy-max-money=9000
 ```
 
 All numbers are defaults and all are configurable. Ticks depend on your tick rate, and these assume 64 a second. The inspector sliders stop at 100000 (1000000 for `max_money`); set the property from code to go beyond them.
