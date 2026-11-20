@@ -1,10 +1,10 @@
-# dot-economy
+# GameSpice Economy
 
 A round-based buy economy: money, a shop, a buy window, refunds, and a per-team loss-bonus ladder. **It sells ids and grants nothing**: `bought` carries an id and the game decides what that means.
 
 Read the family [CLAUDE.md](../../CLAUDE.md) first.
 
-**The distributable is `addons/dot_economy/`.** It requires [dot-core](../dot-core) and nothing else (`ln -s ../../dot-core/addons/dot_core addons/dot_core`, gitignored). It imports neither dot-loadout nor dot-combat.
+**The distributable is `addons/dot_economy/`.** It requires [GameSpice Core](../dot-core) and nothing else (`ln -s ../../dot-core/addons/dot_core addons/dot_core`, gitignored). It imports neither dot-loadout nor dot-combat.
 
 ## Read before
 

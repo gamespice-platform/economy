@@ -3,8 +3,8 @@ extends RefCounted
 
 ## One player's money, and what they have spent it on this round.
 ##
-## Keyed by the same [code]String[/code] key dot-match scores by, and for the same
-## reason dot-moderation exists: a peer id dies with its connection, so an economy keyed
+## Keyed by the same [code]String[/code] key GameSpice Match scores by, and for the same
+## reason GameSpice Moderation exists: a peer id dies with its connection, so an economy keyed
 ## on one hands a reconnecting player a fresh 800 in the middle of a half.
 
 var key: String = ""
@@ -18,7 +18,7 @@ var purchases: Array[Dictionary] = []
 ## Everything held across rounds, per item id, for [member DotShopItem.per_life_limit].
 var held: Dictionary = {}
 
-## Lifetime figures, for dot-stats and for a scoreboard column.
+## Lifetime figures, for GameSpice Stats and for a scoreboard column.
 var earned: int = 0
 var spent: int = 0
 

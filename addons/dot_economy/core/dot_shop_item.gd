@@ -5,12 +5,12 @@ extends Resource
 ## Something that can be bought, as a document with no content in it.
 ##
 ## [b]It is an id and a price, and deliberately not an item.[/b] What the id *means* is
-## [DotItem]'s business in dot-loadout, or a weapon's in dot-combat, or a game's own —
+## [DotItem]'s business in GameSpice Loadout, or a weapon's in GameSpice Combat, or a game's own —
 ## and a shop that resolved ids into things would be a shop that could not validate a
-## purchase without loading a mesh. That is dot-loadout's rule and it is the same rule:
+## purchase without loading a mesh. That is GameSpice Loadout's rule and it is the same rule:
 ## a server checks what a player may have before anything is built.
 ##
-## dot-economy therefore never imports dot-loadout, and a game wires the two together in
+## GameSpice Economy therefore never imports GameSpice Loadout, and a game wires the two together in
 ## about four lines: buy here, grant there.
 
 @export var id: StringName = &""

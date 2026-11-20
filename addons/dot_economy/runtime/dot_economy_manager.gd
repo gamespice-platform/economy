@@ -20,7 +20,7 @@ extends Node
 ## [b]It sells ids and never grants anything.[/b] `bought` carries an item id and the
 ## game does whatever that means — [DotLoadoutManager], a [DotWeaponArsenal], a boolean. A
 ## shop that granted things would be one that could not validate a purchase without
-## loading a mesh, which is dot-loadout's rule and the same one.
+## loading a mesh, which is GameSpice Loadout's rule and the same one.
 ##
 ## [b]No autoload[/b], for the family's reason: a server and a mirroring client are two
 ## of these in one process.

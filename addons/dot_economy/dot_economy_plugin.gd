@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-## Editor entry point for dot-economy. Registers inspector types only.
+## Editor entry point for GameSpice Economy. Registers inspector types only.
 ##
 ## No autoloads. A server and a mirroring client are two of these in one process, which
 ## is the arrangement every suite in this family runs — and a server hosting two matches

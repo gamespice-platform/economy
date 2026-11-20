@@ -1,4 +1,4 @@
-# dot-economy history
+# GameSpice Economy history
 
 ## A zero buy time meant no buying
 

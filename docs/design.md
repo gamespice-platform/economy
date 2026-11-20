@@ -1,10 +1,10 @@
-# dot-economy design
+# GameSpice Economy design
 
 Why the addon exists, why the defaults are what they are, and the decisions that look arbitrary and are not. The one-line rules are in [CLAUDE.md](../CLAUDE.md).
 
 ## Why this exists
 
-[dot-loadout](../../dot-loadout) answers "what may this player take in", as a document validated against a schema and entitlements. That is the *permanent* question: what you own, what you have unlocked. It has no answer at all for the *per-round* one: what you can afford this round, given how the last one went.
+[GameSpice Loadout](../../dot-loadout) answers "what may this player take in", as a document validated against a schema and entitlements. That is the *permanent* question: what you own, what you have unlocked. It has no answer at all for the *per-round* one: what you can afford this round, given how the last one went.
 
 That question is the whole of the round-based buy genre. It is also the system most commonly reimplemented badly, because the numbers look arbitrary and are not:
 
@@ -14,9 +14,9 @@ That question is the whole of the round-based buy genre. It is also the system m
 
 ## The one idea: a shop item is an id and a price
 
-`DotShopItem` has no scene, no mesh, no `DotItem` and no `DotWeaponDef` in it. `bought` carries an id and the game does whatever that means: grant a `DotItem` through dot-loadout, give a weapon id to a `DotWeaponArsenal`, set a boolean.
+`DotShopItem` has no scene, no mesh, no `DotItem` and no `DotWeaponDef` in it. `bought` carries an id and the game does whatever that means: grant a `DotItem` through GameSpice Loadout, give a weapon id to a `DotWeaponArsenal`, set a boolean.
 
-That is dot-loadout's own rule for dot-loadout's own reason: **a purchase has to validate without loading anything**, because the validation happens on a server that may not have the content, at boot, in a headless process. It is also why dot-economy imports neither dot-loadout nor dot-combat, and why a game wires them together itself in a few lines.
+That is GameSpice Loadout's own rule for GameSpice Loadout's own reason: **a purchase has to validate without loading anything**, because the validation happens on a server that may not have the content, at boot, in a headless process. It is also why GameSpice Economy imports neither GameSpice Loadout nor GameSpice Combat, and why a game wires them together itself in a few lines.
 
 ## Decisions
 
@@ -48,14 +48,14 @@ Otherwise a player sells their rifle at the end of the round for money they keep
 
 Knowing what the other side can afford is the single most valuable piece of information in this genre. A manager that offered "everybody's economy" as one wire form would have made that decision for the game; this one makes the game make it.
 
-### Keyed by `String`, like dot-match
+### Keyed by `String`, like GameSpice Match
 
-Not a peer id. dot-moderation exists because a peer id dies with its connection, and an economy keyed on one hands a reconnecting player a fresh 800 in the middle of a half.
+Not a peer id. GameSpice Moderation exists because a peer id dies with its connection, and an economy keyed on one hands a reconnecting player a fresh 800 in the middle of a half.
 
 ## Things deliberately not here
 
-- **No buy menu.** dot-ui's rule. `DotShop.for_team()` returns the list, cheapest first, so that every menu drawing it agrees about the order.
+- **No buy menu.** GameSpice UI's rule. `DotShop.for_team()` returns the list, cheapest first, so that every menu drawing it agrees about the order.
 - **No granting.** See above; this is the design.
-- **No persistent currency.** Money here is per match. A currency that survives a disconnect is an account balance and belongs behind an authenticated backbone, which is dot-auth and dot-stats, and a "buy" against one is a transaction, not a game rule.
+- **No persistent currency.** Money here is per match. A currency that survives a disconnect is an account balance and belongs behind an authenticated backbone, which is GameSpice Auth and GameSpice Stats, and a "buy" against one is a transaction, not a game rule.
 - **No per-weapon ammunition economy.** The genre buys ammunition with the gun. A game that wants it declares an item with `requires` set.
-- **No auto-buy or rebuy.** They are a client convenience built on `may_buy` and a stored list, and the list is a preference, which is dot-user's.
+- **No auto-buy or rebuy.** They are a client convenience built on `may_buy` and a stored list, and the list is a preference, which is GameSpice User's.
