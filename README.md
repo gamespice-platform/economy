@@ -1,3 +1,5 @@
+[![dot-economy - GameSpice addon](docs/banner.png)](https://moddingcommunity.com/a/237-dot-economy)
+
 A round-based buy economy for Godot 4.7+: money, a shop, a buy window, refunds, kill and round awards, and a loss bonus for a team that keeps losing. Part of the [dot-*](https://github.com/gamespice-platform) family. It needs only [dot-core](https://github.com/gamespice-platform/core).
 
 Every player has a balance. A round opens a buy window, and players spend money in the shop while it is open, and by default while standing in a buy zone. Kills, round wins and objectives pay out. A purchase can be refunded for a short time.
