@@ -1,4 +1,4 @@
-[![Economy - GameSpice addon](docs/banner.png)](https://moddingcommunity.com/a/237-dot-economy)
+[![Economy - GameSpice addon](docs/banner.png)](https://moddingcommunity.com/a/50-gs-economy)
 
 A round-based buy economy for Godot 4.7+: money, a shop, a buy window, refunds, kill and round awards, and a loss bonus for a team that keeps losing. Part of the [dot-*](https://github.com/gamespice-platform) family. It needs only [dot-core](https://github.com/gamespice-platform/core).
 
