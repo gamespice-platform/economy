@@ -106,7 +106,7 @@ extends GSConfig
 
 
 func env_prefix() -> String:
-	return "DOT_ECONOMY_"
+	return "GS_ECONOMY_"
 
 
 func cli_prefix() -> String:

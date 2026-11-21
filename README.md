@@ -8,8 +8,8 @@ The shop sells ids. It never hands out weapons or items. When somebody buys some
 
 ## Install
 
-1. Copy `addons/dot_economy/` and `addons/dot_core/` into your project.
-2. Enable dot-economy in *Project > Project Settings > Plugins*.
+1. Copy `addons/gs_economy/` and `addons/gs_core/` into your project.
+2. Enable gs-economy in *Project > Project Settings > Plugins*.
 
 [GameSpice Bootstrap](https://github.com/gamespice-platform/bootstrap) clones every project and links the addons for you.
 

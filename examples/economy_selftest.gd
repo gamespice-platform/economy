@@ -1,6 +1,6 @@
 extends Node
 
-## Exercises dot-economy with no other addon and no world.
+## Exercises gs-economy with no other addon and no world.
 ##
 ## Teams, positions and liveness are dictionaries, which is the seam a real game fills.
 ## What is checked is what this addon promises: that the ladder is the genre's, that a
@@ -32,7 +32,7 @@ func _ready() -> void:
 
 
 func _run() -> void:
-	_line("dot-economy self-test")
+	_line("gs-economy self-test")
 	_line("")
 
 	_test_rules()

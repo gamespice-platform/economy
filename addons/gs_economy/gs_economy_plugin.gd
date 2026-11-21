@@ -7,13 +7,13 @@ extends EditorPlugin
 ## is the arrangement every suite in this family runs — and a server hosting two matches
 ## is two economies that must not share a loss-bonus ladder.
 
-const _ICON := "res://addons/dot_economy/icon_placeholder.svg"
+const _ICON := "res://addons/gs_economy/icon_placeholder.svg"
 
 const _TYPES := [
 	[
 		"GSEconomyManager",
 		"Node",
-		"res://addons/dot_economy/runtime/dot_economy_manager.gd",
+		"res://addons/gs_economy/runtime/gs_economy_manager.gd",
 	],
 ]
 

@@ -4,7 +4,7 @@ Why the addon exists, why the defaults are what they are, and the decisions that
 
 ## Why this exists
 
-[GameSpice Loadout](../../dot-loadout) answers "what may this player take in", as a document validated against a schema and entitlements. That is the *permanent* question: what you own, what you have unlocked. It has no answer at all for the *per-round* one: what you can afford this round, given how the last one went.
+[GameSpice Loadout](../../gs-loadout) answers "what may this player take in", as a document validated against a schema and entitlements. That is the *permanent* question: what you own, what you have unlocked. It has no answer at all for the *per-round* one: what you can afford this round, given how the last one went.
 
 That question is the whole of the round-based buy genre. It is also the system most commonly reimplemented badly, because the numbers look arbitrary and are not:
 

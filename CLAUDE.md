@@ -4,7 +4,7 @@ A round-based buy economy: money, a shop, a buy window, refunds, and a per-team 
 
 Read the family [CLAUDE.md](../../CLAUDE.md) first.
 
-**The distributable is `addons/dot_economy/`.** It requires [GameSpice Core](../dot-core) and nothing else (`ln -s ../../dot-core/addons/dot_core addons/dot_core`, gitignored). It imports neither dot-loadout nor dot-combat.
+**The distributable is `addons/gs_economy/`.** It requires [GameSpice Core](../gs-core) and nothing else (`ln -s ../../gs-core/addons/gs_core addons/gs_core`, gitignored). It imports neither gs-loadout nor gs-combat.
 
 ## Read before
 
@@ -17,14 +17,14 @@ Read the family [CLAUDE.md](../../CLAUDE.md) first.
 
 | Path | What |
 | --- | --- |
-| `core/dot_economy_rules.gd` | `GSEconomyRules`: every number (balance, awards, loss ladder, buy and refund windows), a layered `GSConfig` |
-| `core/dot_shop_item.gd` | `GSShopItem`: id, price, teams, `kill_award`, per-round and per-life limits, `requires`, `refundable` |
-| `core/dot_shop.gd` | `GSShop`: the catalogue, validated at boot; `for_team()` cheapest first |
-| `core/dot_economy_account.gd` | `GSEconomyAccount`: one player's money and this round's purchases |
-| `runtime/dot_economy_manager.gd` | `GSEconomyManager`: the one node a game holds; `may_buy`, `buy`, `refund`, `award`, round hooks, `to_wire(key)` |
+| `core/gs_economy_rules.gd` | `GSEconomyRules`: every number (balance, awards, loss ladder, buy and refund windows), a layered `GSConfig` |
+| `core/gs_shop_item.gd` | `GSShopItem`: id, price, teams, `kill_award`, per-round and per-life limits, `requires`, `refundable` |
+| `core/gs_shop.gd` | `GSShop`: the catalogue, validated at boot; `for_team()` cheapest first |
+| `core/gs_economy_account.gd` | `GSEconomyAccount`: one player's money and this round's purchases |
+| `runtime/gs_economy_manager.gd` | `GSEconomyManager`: the one node a game holds; `may_buy`, `buy`, `refund`, `award`, round hooks, `to_wire(key)` |
 | `examples/economy_selftest.tscn` | the suite |
 
-Paths except `examples/` are in `addons/dot_economy/`.
+Paths except `examples/` are in `addons/gs_economy/`.
 
 ## Running and testing
 
@@ -40,6 +40,6 @@ The family's two steps ([family CLAUDE.md](../../CLAUDE.md#validating-anything))
 - Refunds close with the buy window; `validate()` refuses a refund window longer than it. [design](docs/design.md#refunds-close-with-the-buy-window)
 - `buy_time_ticks == 0` means no timer, not no buying. [design](docs/design.md#a-zero-buy-time-means-no-timer-not-no-buying)
 - `to_wire` is per player: a balance is private. [design](docs/design.md#a-balance-is-private-and-to_wire-is-per-player)
-- Accounts are keyed by `String`, never a peer id. [design](docs/design.md#keyed-by-string-like-dot-match)
+- Accounts are keyed by `String`, never a peer id. [design](docs/design.md#keyed-by-string-like-gs-match)
 
 Deliberately not here: a buy menu, granting, persistent currency, an ammunition economy, auto-buy. [design](docs/design.md#things-deliberately-not-here)
