@@ -11,7 +11,7 @@ const _ICON := "res://addons/dot_economy/icon_placeholder.svg"
 
 const _TYPES := [
 	[
-		"DotEconomyManager",
+		"GSEconomyManager",
 		"Node",
 		"res://addons/dot_economy/runtime/dot_economy_manager.gd",
 	],

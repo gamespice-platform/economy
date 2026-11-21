@@ -27,7 +27,7 @@ var _zone: Dictionary = {}
 
 
 func _ready() -> void:
-	DotLog.set_level(DotLog.Level.ERROR)
+	GSLog.set_level(GSLog.Level.ERROR)
 	_run()
 
 
@@ -66,27 +66,27 @@ func _run() -> void:
 	get_tree().quit(1 if _failed > 0 else 0)
 
 
-func _arsenal() -> Array[DotShopItem]:
-	var kevlar := DotShopItem.make(&"kevlar", 650, "Kevlar")
-	var helmet := DotShopItem.make(&"helmet", 350, "Helmet")
+func _arsenal() -> Array[GSShopItem]:
+	var kevlar := GSShopItem.make(&"kevlar", 650, "Kevlar")
+	var helmet := GSShopItem.make(&"helmet", 350, "Helmet")
 	helmet.requires = &"kevlar"
-	var ak := DotShopItem.make(&"ak47", 2700, "AK-47")
+	var ak := GSShopItem.make(&"ak47", 2700, "AK-47")
 	ak.teams = PackedInt32Array([1])
-	var m4 := DotShopItem.make(&"m4a1", 3100, "M4A1")
+	var m4 := GSShopItem.make(&"m4a1", 3100, "M4A1")
 	m4.teams = PackedInt32Array([2])
-	var sniper := DotShopItem.make(&"sniper", 4750, "Sniper Rifle")
+	var sniper := GSShopItem.make(&"sniper", 4750, "Sniper Rifle")
 	sniper.kill_award = 100
-	var nade := DotShopItem.make(&"he", 300, "HE Grenade")
+	var nade := GSShopItem.make(&"he", 300, "HE Grenade")
 	nade.per_round_limit = 1
 	nade.tags = PackedStringArray(["grenade"])
-	var defuser := DotShopItem.make(&"defuser", 400, "Defuse Kit")
+	var defuser := GSShopItem.make(&"defuser", 400, "Defuse Kit")
 	defuser.teams = PackedInt32Array([2])
 	defuser.refundable = false
 	return [kevlar, helmet, ak, m4, sniper, nade, defuser]
 
 
-func _manager() -> DotEconomyManager:
-	var m := DotEconomyManager.new()
+func _manager() -> GSEconomyManager:
+	var m := GSEconomyManager.new()
 	m.team_fn = func(key: String) -> int: return int(_teams.get(key, 0))
 	m.alive_fn = func(key: String) -> bool: return bool(_alive.get(key, true))
 	m.in_buy_zone_fn = func(key: String) -> bool: return bool(_zone.get(key, true))
@@ -102,7 +102,7 @@ func _manager() -> DotEconomyManager:
 func _test_rules() -> void:
 	_section("rules")
 
-	var rules := DotEconomyRules.new()
+	var rules := GSEconomyRules.new()
 	_check(rules.validate().ok, "the defaults validate")
 	_check(rules.start_money == 800, "and are the genre's: 800 to start")
 	_check(rules.max_money == 16000, "16000 as a ceiling")
@@ -138,25 +138,25 @@ func _test_rules() -> void:
 func _test_items() -> void:
 	_section("items")
 
-	var ak := DotShopItem.make(&"ak47", 2700)
+	var ak := GSShopItem.make(&"ak47", 2700)
 	_check(ak.validate().ok, "an item validates")
 	_check(ak.available_to(1), "and is sold to everybody by default")
 
 	ak.teams = PackedInt32Array([1])
 	_check(ak.available_to(1) and not ak.available_to(2), "until it names a team")
 
-	var rules := DotEconomyRules.new()
+	var rules := GSEconomyRules.new()
 	_check(ak.award_for_kill(rules) == 300, "a kill pays the default")
-	var sniper := DotShopItem.make(&"sniper", 4750)
+	var sniper := GSShopItem.make(&"sniper", 4750)
 	sniper.kill_award = 100
 	_check(
 		sniper.award_for_kill(rules) == 100,
 		"unless the weapon says otherwise — the genre's most-copied economic idea"
 	)
 
-	var bad := DotShopItem.new()
+	var bad := GSShopItem.new()
 	_check(not bad.validate().ok, "an item with no id is refused")
-	var loop := DotShopItem.make(&"x", 100)
+	var loop := GSShopItem.make(&"x", 100)
 	loop.requires = &"x"
 	_check(
 		not loop.validate().ok,
@@ -167,9 +167,9 @@ func _test_items() -> void:
 func _test_shop() -> void:
 	_section("the shop")
 
-	var built := DotShop.of(_arsenal())
+	var built := GSShop.of(_arsenal())
 	_check(built.ok, "an arsenal builds")
-	var shop: DotShop = built.value
+	var shop: GSShop = built.value
 	_check(shop.has(&"ak47"), "and has what was put in it")
 	_check(shop.item(&"sniper").price == 4750, "with its price")
 
@@ -186,24 +186,24 @@ func _test_shop() -> void:
 
 	_check(shop.with_tag("grenade").size() == 1, "items can be found by tag")
 
-	var dup := DotShop.of([
-		DotShopItem.make(&"same", 1), DotShopItem.make(&"same", 2),
-	] as Array[DotShopItem])
+	var dup := GSShop.of([
+		GSShopItem.make(&"same", 1), GSShopItem.make(&"same", 2),
+	] as Array[GSShopItem])
 	_check(not dup.ok, "two items with one id are refused")
 
-	var orphan := DotShopItem.make(&"scope", 100)
+	var orphan := GSShopItem.make(&"scope", 100)
 	orphan.requires = &"nothing_here"
 	_check(
-		not DotShop.of([orphan] as Array[DotShopItem]).ok,
+		not GSShop.of([orphan] as Array[GSShopItem]).ok,
 		"and an item requiring something not in the shop, which could never be bought "
 		+ "with nothing saying why"
 	)
 
-	var later := DotShopItem.make(&"upgrade", 100)
+	var later := GSShopItem.make(&"upgrade", 100)
 	later.requires = &"base"
-	var base := DotShopItem.make(&"base", 100)
+	var base := GSShopItem.make(&"base", 100)
 	_check(
-		DotShop.of([later, base] as Array[DotShopItem]).ok,
+		GSShop.of([later, base] as Array[GSShopItem]).ok,
 		"a requirement declared later in the list is fine — the order of a catalogue "
 		+ "file is not part of its meaning"
 	)
@@ -212,7 +212,7 @@ func _test_shop() -> void:
 func _test_accounts() -> void:
 	_section("accounts")
 
-	var acct := DotEconomyAccount.new("ada", 800)
+	var acct := GSEconomyAccount.new("ada", 800)
 	_check(acct.balance == 800, "an account starts where it was opened")
 
 	var landed := acct.credit(500, 16000)
@@ -288,7 +288,7 @@ func _test_buying() -> void:
 	_check(m.buy("ada", &"he").ok, "a grenade is sold")
 	var second := m.buy("ada", &"he")
 	_check(not second.ok, "and only one per round")
-	_check(second.code() == DotError.CODE_QUOTA, "with a quota code")
+	_check(second.code() == GSError.CODE_QUOTA, "with a quota code")
 
 	_zone["ada"] = false
 	_check(not m.buy("ada", &"kevlar").ok, "outside a buy zone, nothing is sold")
@@ -422,7 +422,7 @@ func _test_refunds() -> void:
 	var _b5 := m.buy("ada", &"kevlar")
 	var off := m.refund("ada", &"kevlar")
 	_check(
-		not off.ok and off.code() == DotError.CODE_UNSUPPORTED,
+		not off.ok and off.code() == GSError.CODE_UNSUPPORTED,
 		"a server with refunds off says so rather than failing for another reason"
 	)
 
@@ -553,7 +553,7 @@ func _test_wire() -> void:
 	var _a := m.award("ada", 4000, &"test")
 	var _b := m.buy("ada", &"kevlar")
 
-	var mirror := DotEconomyManager.new()
+	var mirror := GSEconomyManager.new()
 	mirror.authoritative = false
 	add_child(mirror)
 	var _s := mirror.setup(_arsenal())

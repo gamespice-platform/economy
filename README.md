@@ -16,11 +16,11 @@ The shop sells ids. It never hands out weapons or items. When somebody buys some
 ## Quick start
 
 ```gdscript
-var economy := DotEconomyManager.new()
+var economy := GSEconomyManager.new()
 economy.team_fn = match_node.team_of
 economy.alive_fn = world.is_alive
 economy.in_buy_zone_fn = func(key): return world.in_buy_zone(key)
-economy.setup(shop_items)           # an Array[DotShopItem]
+economy.setup(shop_items)           # an Array[GSShopItem]
 add_child(economy)
 
 economy.bought.connect(func(key, id, price, balance):
@@ -28,7 +28,7 @@ economy.bought.connect(func(key, id, price, balance):
 
 economy.on_round_start(tick)        # opens the buy window
 economy.advance(tick)               # closes it when the buy time runs out
-economy.buy("ada", &"rifle")        # a DotResult; bought fires if it went through
+economy.buy("ada", &"rifle")        # a GSResult; bought fires if it went through
 economy.on_kill("ada", "bob", &"rifle")
 economy.on_round_end(winning_team)  # pays the winners and the loss bonus; 0 is a draw
 ```
@@ -45,7 +45,7 @@ button.tooltip_text = "" if why.ok else why.error.message
 
 ## Shop items
 
-Each `DotShopItem` has these fields.
+Each `GSShopItem` has these fields.
 
 | Field | What it does |
 | --- | --- |
@@ -71,10 +71,10 @@ A balance is private. `to_wire(key)` gives one player's account, and `apply_wire
 
 ## Settings
 
-The rules live in a `DotEconomyRules` resource on the manager's `rules`. The manager makes a default one if you set none. Values layer in the usual order: inspector defaults, a JSON file, the environment, then the command line. Call `load_layered()` before `setup()`:
+The rules live in a `GSEconomyRules` resource on the manager's `rules`. The manager makes a default one if you set none. Values layer in the usual order: inspector defaults, a JSON file, the environment, then the command line. Call `load_layered()` before `setup()`:
 
 ```gdscript
-var rules := DotEconomyRules.new()
+var rules := GSEconomyRules.new()
 rules.load_layered("user://economy.json")
 economy.rules = rules
 ```

@@ -1,10 +1,10 @@
-class_name DotEconomyManager
+class_name GSEconomyManager
 extends Node
 
 ## A round-based buy economy: money, a shop, a buy window and a loss-bonus ladder.
 ##
 ## [codeblock]
-## var economy := DotEconomyManager.new()
+## var economy := GSEconomyManager.new()
 ## economy.in_buy_zone_fn = func(key): return world.in_buy_zone(key)
 ## economy.team_fn = match_node.team_of
 ## economy.alive_fn = world.is_alive
@@ -18,7 +18,7 @@ extends Node
 ## [/codeblock]
 ##
 ## [b]It sells ids and never grants anything.[/b] `bought` carries an item id and the
-## game does whatever that means — [DotLoadoutManager], a [DotWeaponArsenal], a boolean. A
+## game does whatever that means — [GSLoadoutManager], a [GSWeaponArsenal], a boolean. A
 ## shop that granted things would be one that could not validate a purchase without
 ## loading a mesh, which is GameSpice Loadout's rule and the same one.
 ##
@@ -44,17 +44,17 @@ signal buy_window(open: bool)
 ## has been told something untrue about a system they are planning around.
 signal award_capped(key: String, wanted: int, landed: int)
 
-@export var rules: DotEconomyRules = null
+@export var rules: GSEconomyRules = null
 
 ## What is for sale. Assigning this and calling [method setup] is the whole of loading a
 ## shop.
-@export var catalogue: Array[DotShopItem] = []
+@export var catalogue: Array[GSShopItem] = []
 
 @export var authoritative: bool = true
 
 ## Whether a player is standing somewhere they may buy.
 ## [code](key: String) -> bool[/code]. Consulted only when
-## [member DotEconomyRules.require_buy_zone] is on.
+## [member GSEconomyRules.require_buy_zone] is on.
 var in_buy_zone_fn: Callable = Callable()
 
 ## Which team somebody is on. [code](key: String) -> int[/code].
@@ -63,7 +63,7 @@ var team_fn: Callable = Callable()
 ## Whether somebody is alive. [code](key: String) -> bool[/code].
 var alive_fn: Callable = Callable()
 
-var shop: DotShop = null
+var shop: GSShop = null
 
 var _accounts: Dictionary = {}
 var _streaks: Dictionary = {}
@@ -74,35 +74,35 @@ var _tick: int = 0
 
 func _init() -> void:
 	if rules == null:
-		rules = DotEconomyRules.new()
+		rules = GSEconomyRules.new()
 
 
-func setup(p_items: Array[DotShopItem] = []) -> DotResult:
+func setup(p_items: Array[GSShopItem] = []) -> GSResult:
 	if not p_items.is_empty():
 		catalogue = p_items
 	if rules == null:
-		rules = DotEconomyRules.new()
+		rules = GSEconomyRules.new()
 
 	var res := rules.validate()
 	if not res.ok:
 		return res.wrap("economy rules")
 
-	var built := DotShop.of(catalogue)
+	var built := GSShop.of(catalogue)
 	if not built.ok:
 		return built.wrap("shop")
 	shop = built.value
 
-	DotLog.info("economy", "%d items for sale" % shop.items.size())
-	return DotResult.success(null)
+	GSLog.info("economy", "%d items for sale" % shop.items.size())
+	return GSResult.success(null)
 
 
 # --- Accounts ----------------------------------------------------------------
 
 ## Somebody's account, opened at the starting balance if they have not got one.
-func account(key: String) -> DotEconomyAccount:
-	var acct: DotEconomyAccount = _accounts.get(key, null)
+func account(key: String) -> GSEconomyAccount:
+	var acct: GSEconomyAccount = _accounts.get(key, null)
 	if acct == null:
-		acct = DotEconomyAccount.new(key, rules.start_money)
+		acct = GSEconomyAccount.new(key, rules.start_money)
 		_accounts[key] = acct
 	return acct
 
@@ -111,12 +111,12 @@ func balance(key: String) -> int:
 	return account(key).balance
 
 
-## [param key] died: everything they held is gone, so [member DotShopItem.per_life_limit] and
-## [member DotShopItem.requires] start again. The money stays. Until this existed `held`
+## [param key] died: everything they held is gone, so [member GSShopItem.per_life_limit] and
+## [member GSShopItem.requires] start again. The money stays. Until this existed `held`
 ## only fell on a refund or a reset, so a player who died with a rifle could not buy it again
 ## all half.
 func on_death(key: String) -> void:
-	var acct: DotEconomyAccount = _accounts.get(key, null)
+	var acct: GSEconomyAccount = _accounts.get(key, null)
 	if acct != null:
 		acct.held.clear()
 
@@ -124,7 +124,7 @@ func on_death(key: String) -> void:
 ## [param count] of [param id] that [param key] held are gone: thrown, dropped, used up.
 ## Returns how many were.
 func lost(key: String, id: StringName, count: int = 1) -> int:
-	var acct: DotEconomyAccount = _accounts.get(key, null)
+	var acct: GSEconomyAccount = _accounts.get(key, null)
 	return acct.drop_held(id, count) if acct != null else 0
 
 
@@ -190,62 +190,62 @@ func buy_ticks_remaining() -> int:
 ## Public and separate from [method buy] because a buy menu has to grey out what cannot
 ## be bought and say why — and a menu that reimplements the test is a menu that
 ## disagrees with the server about what is for sale.
-func may_buy(key: String, id: StringName) -> DotResult:
+func may_buy(key: String, id: StringName) -> GSResult:
 	var item := shop.item(id) if shop != null else null
 	if item == null:
-		return DotResult.fail(
-			DotError.CODE_INVALID, "Nothing called '%s' is for sale." % id
+		return GSResult.fail(
+			GSError.CODE_INVALID, "Nothing called '%s' is for sale." % id
 		)
 
 	if not _buy_open:
-		return DotResult.fail(DotError.CODE_STATE, "The buy window is closed.")
+		return GSResult.fail(GSError.CODE_STATE, "The buy window is closed.")
 
 	if not rules.allow_buying_while_dead and alive_fn.is_valid() \
 			and not bool(alive_fn.call(key)):
-		return DotResult.fail(DotError.CODE_STATE, "A dead player buys nothing.")
+		return GSResult.fail(GSError.CODE_STATE, "A dead player buys nothing.")
 
 	if rules.require_buy_zone and in_buy_zone_fn.is_valid() \
 			and not bool(in_buy_zone_fn.call(key)):
-		return DotResult.fail(DotError.CODE_STATE, "Not in a buy zone.")
+		return GSResult.fail(GSError.CODE_STATE, "Not in a buy zone.")
 
 	var team := int(team_fn.call(key)) if team_fn.is_valid() else 0
 	if not item.available_to(team):
-		return DotResult.fail(
-			DotError.CODE_FORBIDDEN, "'%s' is not sold to team %d." % [id, team]
+		return GSResult.fail(
+			GSError.CODE_FORBIDDEN, "'%s' is not sold to team %d." % [id, team]
 		)
 
 	var acct := account(key)
 
 	if item.requires != &"" and acct.holding(item.requires) <= 0:
-		return DotResult.fail(
-			DotError.CODE_STATE,
+		return GSResult.fail(
+			GSError.CODE_STATE,
 			"'%s' needs '%s' first." % [id, item.requires]
 		)
 
 	if item.per_round_limit > 0 and acct.bought_this_round(id) >= item.per_round_limit:
-		return DotResult.fail(
-			DotError.CODE_QUOTA,
+		return GSResult.fail(
+			GSError.CODE_QUOTA,
 			"Only %d '%s' per round." % [item.per_round_limit, id]
 		)
 
 	if item.per_life_limit > 0 and acct.holding(id) >= item.per_life_limit:
-		return DotResult.fail(
-			DotError.CODE_QUOTA, "Already holding %d '%s'." % [acct.holding(id), id]
+		return GSResult.fail(
+			GSError.CODE_QUOTA, "Already holding %d '%s'." % [acct.holding(id), id]
 		)
 
 	if not acct.can_afford(item.price):
-		return DotResult.fail(
-			DotError.CODE_STATE,
+		return GSResult.fail(
+			GSError.CODE_STATE,
 			"$%d short of '%s'." % [item.price - acct.balance, id]
 		)
 
-	return DotResult.success(item)
+	return GSResult.success(item)
 
 
-func buy(key: String, id: StringName) -> DotResult:
+func buy(key: String, id: StringName) -> GSResult:
 	if not authoritative:
-		return DotResult.fail(
-			DotError.CODE_STATE,
+		return GSResult.fail(
+			GSError.CODE_STATE,
 			"A mirroring economy does not sell anything; it is told what was sold."
 		)
 
@@ -253,24 +253,24 @@ func buy(key: String, id: StringName) -> DotResult:
 	if not allowed.ok:
 		return allowed
 
-	var item: DotShopItem = allowed.value
+	var item: GSShopItem = allowed.value
 	var acct := account(key)
 	var _paid := acct.debit(item.price)
 	acct.note_purchase(id, item.price, _tick)
 	balance_changed.emit(key, acct.balance, -item.price, &"bought")
 	bought.emit(key, id, item.price, acct.balance)
-	return DotResult.success(item)
+	return GSResult.success(item)
 
 
 ## Give something back inside the refund window.
-func refund(key: String, id: StringName) -> DotResult:
+func refund(key: String, id: StringName) -> GSResult:
 	if rules.refund_ticks <= 0:
-		return DotResult.fail(
-			DotError.CODE_UNSUPPORTED, "This server has refunds turned off."
+		return GSResult.fail(
+			GSError.CODE_UNSUPPORTED, "This server has refunds turned off."
 		)
 	if rules.refund_within_buy_time and not _buy_open:
-		return DotResult.fail(
-			DotError.CODE_STATE,
+		return GSResult.fail(
+			GSError.CODE_STATE,
 			(
 				"Refunds close with the buy window — otherwise a player sells their "
 				+ "rifle at the end of a round for money they keep."
@@ -279,23 +279,23 @@ func refund(key: String, id: StringName) -> DotResult:
 
 	var item := shop.item(id) if shop != null else null
 	if item == null:
-		return DotResult.fail(DotError.CODE_INVALID, "No such item '%s'." % id)
+		return GSResult.fail(GSError.CODE_INVALID, "No such item '%s'." % id)
 	if not item.refundable:
-		return DotResult.fail(
-			DotError.CODE_FORBIDDEN, "'%s' cannot be given back." % id
+		return GSResult.fail(
+			GSError.CODE_FORBIDDEN, "'%s' cannot be given back." % id
 		)
 
 	var acct := account(key)
 	var last := acct.last_purchase(id)
 	if last.is_empty():
-		return DotResult.fail(
-			DotError.CODE_STATE, "%s did not buy a '%s' this round." % [key, id]
+		return GSResult.fail(
+			GSError.CODE_STATE, "%s did not buy a '%s' this round." % [key, id]
 		)
 
 	var age := _tick - int(last["tick"])
 	if age > rules.refund_ticks:
-		return DotResult.fail(
-			DotError.CODE_STATE,
+		return GSResult.fail(
+			GSError.CODE_STATE,
 			"Too late to give back a '%s' (%d ticks, limit %d)."
 				% [id, age, rules.refund_ticks]
 		)
@@ -305,7 +305,7 @@ func refund(key: String, id: StringName) -> DotResult:
 	var landed := acct.credit(back, rules.max_money)
 	balance_changed.emit(key, acct.balance, landed, &"refund")
 	refunded.emit(key, id, landed, acct.balance)
-	return DotResult.success(landed)
+	return GSResult.success(landed)
 
 
 # --- The round ---------------------------------------------------------------
@@ -315,7 +315,7 @@ func on_round_start(tick: int) -> void:
 	_tick = tick
 	_round_start = tick
 	for key: Variant in _accounts.keys():
-		(_accounts[key] as DotEconomyAccount).begin_round()
+		(_accounts[key] as GSEconomyAccount).begin_round()
 
 	# Always open, and `advance` is what closes it. A zero buy time means "no timer",
 	# not "no buying" -- reading it as a condition here made the one configuration a
@@ -333,7 +333,7 @@ func on_round_end(winning_team: int, _reason: StringName = &"") -> void:
 	_set_buy_open(false)
 
 	if not team_fn.is_valid():
-		DotLog.warn(
+		GSLog.warn(
 			"economy",
 			(
 				"A round ended and team_fn is not wired, so nobody was paid. An unset "
@@ -374,14 +374,14 @@ func on_half_time() -> void:
 	if not rules.reset_at_half:
 		return
 	for key: Variant in _accounts.keys():
-		(_accounts[key] as DotEconomyAccount).reset(rules.start_money)
+		(_accounts[key] as GSEconomyAccount).reset(rules.start_money)
 		balance_changed.emit(str(key), rules.start_money, 0, &"half_time")
 
 
 func reset_all() -> void:
 	_streaks.clear()
 	for key: Variant in _accounts.keys():
-		(_accounts[key] as DotEconomyAccount).reset(rules.start_money)
+		(_accounts[key] as GSEconomyAccount).reset(rules.start_money)
 
 
 # --- Events a game reports ---------------------------------------------------
@@ -464,7 +464,7 @@ func _teams_present() -> PackedInt32Array:
 ## account would be handing it out. A game that wants to show a team-mate's money sends
 ## this to that team and no further.
 func to_wire(key: String) -> Dictionary:
-	var acct: DotEconomyAccount = _accounts.get(key, null)
+	var acct: GSEconomyAccount = _accounts.get(key, null)
 	return {
 		"k": key,
 		"a": acct.to_wire() if acct != null else {"b": rules.start_money, "p": []},
@@ -497,7 +497,7 @@ func describe() -> Dictionary:
 func describe_lines() -> PackedStringArray:
 	var out := PackedStringArray()
 	out.append(
-		"DotEconomyManager %s tick=%d buy=%s accounts=%d"
+		"GSEconomyManager %s tick=%d buy=%s accounts=%d"
 			% [
 				"authoritative" if authoritative else "mirroring",
 				_tick,
@@ -506,7 +506,7 @@ func describe_lines() -> PackedStringArray:
 			]
 	)
 	for key in keys():
-		var acct: DotEconomyAccount = _accounts[key]
+		var acct: GSEconomyAccount = _accounts[key]
 		out.append(
 			"  %-16s $%-6d bought %d this round"
 				% [key, acct.balance, acct.purchases.size()]

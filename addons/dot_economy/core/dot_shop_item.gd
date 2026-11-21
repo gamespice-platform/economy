@@ -1,11 +1,11 @@
 @tool
-class_name DotShopItem
+class_name GSShopItem
 extends Resource
 
 ## Something that can be bought, as a document with no content in it.
 ##
 ## [b]It is an id and a price, and deliberately not an item.[/b] What the id *means* is
-## [DotItem]'s business in GameSpice Loadout, or a weapon's in GameSpice Combat, or a game's own —
+## [GSItem]'s business in GameSpice Loadout, or a weapon's in GameSpice Combat, or a game's own —
 ## and a shop that resolved ids into things would be a shop that could not validate a
 ## purchase without loading a mesh. That is GameSpice Loadout's rule and it is the same rule:
 ## a server checks what a player may have before anything is built.
@@ -26,7 +26,7 @@ extends Resource
 @export var teams: PackedInt32Array = PackedInt32Array()
 
 ## What killing with this is worth, overriding
-## [member DotEconomyRules.kill_award]. Negative means "use the default".
+## [member GSEconomyRules.kill_award]. Negative means "use the default".
 ##
 ## The genre's most-copied economic idea: a sniper-rifle kill pays 100 and a knife kill
 ## pays 1500, so the cheapest way to make money is the riskiest thing you can do.
@@ -37,8 +37,8 @@ extends Resource
 
 ## How many may be held at once, across rounds. Zero means no limit.
 ##
-## "Held" is what was bought minus what the game said is gone: [method DotEconomyManager.on_death]
-## empties it and [method DotEconomyManager.lost] takes one away (a grenade thrown, a gun
+## "Held" is what was bought minus what the game said is gone: [method GSEconomyManager.on_death]
+## empties it and [method GSEconomyManager.lost] takes one away (a grenade thrown, a gun
 ## dropped). A game that tells it neither gets a limit per half, not per life.
 @export_range(0, 64, 1) var per_life_limit: int = 0
 
@@ -57,8 +57,8 @@ extends Resource
 
 static func make(
 	p_id: StringName, p_price: int, p_name: String = ""
-) -> DotShopItem:
-	var item := DotShopItem.new()
+) -> GSShopItem:
+	var item := GSShopItem.new()
 	item.id = p_id
 	item.price = p_price
 	item.display_name = p_name if p_name != "" else String(p_id).capitalize()
@@ -71,7 +71,7 @@ func available_to(team: int) -> bool:
 	return teams.has(team)
 
 
-func award_for_kill(rules: DotEconomyRules) -> int:
+func award_for_kill(rules: GSEconomyRules) -> int:
 	if kill_award >= 0:
 		return kill_award
 	return rules.kill_award
@@ -81,19 +81,19 @@ func has_tag(tag: String) -> bool:
 	return tags.has(tag)
 
 
-func validate() -> DotResult:
+func validate() -> GSResult:
 	if String(id).strip_edges() == "":
-		return DotResult.fail(DotError.CODE_INVALID, "A shop item needs an id.")
+		return GSResult.fail(GSError.CODE_INVALID, "A shop item needs an id.")
 	if price < 0:
-		return DotResult.fail(
-			DotError.CODE_INVALID, "Item '%s' has a negative price." % id
+		return GSResult.fail(
+			GSError.CODE_INVALID, "Item '%s' has a negative price." % id
 		)
 	if requires == id:
-		return DotResult.fail(
-			DotError.CODE_INVALID,
+		return GSResult.fail(
+			GSError.CODE_INVALID,
 			"Item '%s' requires itself, so it can never be bought." % id
 		)
-	return DotResult.success(null)
+	return GSResult.success(null)
 
 
 func describe() -> Dictionary:

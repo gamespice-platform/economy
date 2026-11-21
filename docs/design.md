@@ -10,11 +10,11 @@ That question is the whole of the round-based buy genre. It is also the system m
 
 - **800 to start and 16000 as a ceiling** (`start_money`, `max_money`) is what makes the first round a pistol round, the second a decision, and the fifth a full buy. Remove the ceiling and a team that saves twice can buy everything for ever; the mode loses its shape.
 - **1400 rising by 500 to 3400** (`loss_bonus_base`, `loss_bonus_step`, `loss_bonus_max`) is what stops a team that loses two rounds from losing the rest. Without a ladder the losing team is poorer *because* they are losing, which is a feedback loop with only one outcome.
-- **A per-item kill award** (`DotShopItem.kill_award`, -1 meaning the rules' default): in the genre a high-calibre sniper rifle kill pays 100 and a knife kill pays 1500. The cheapest way to make money is the riskiest thing you can do, which is the single most-copied economic idea in the genre.
+- **A per-item kill award** (`GSShopItem.kill_award`, -1 meaning the rules' default): in the genre a high-calibre sniper rifle kill pays 100 and a knife kill pays 1500. The cheapest way to make money is the riskiest thing you can do, which is the single most-copied economic idea in the genre.
 
 ## The one idea: a shop item is an id and a price
 
-`DotShopItem` has no scene, no mesh, no `DotItem` and no `DotWeaponDef` in it. `bought` carries an id and the game does whatever that means: grant a `DotItem` through GameSpice Loadout, give a weapon id to a `DotWeaponArsenal`, set a boolean.
+`GSShopItem` has no scene, no mesh, no `GSItem` and no `GSWeaponDef` in it. `bought` carries an id and the game does whatever that means: grant a `GSItem` through GameSpice Loadout, give a weapon id to a `GSWeaponArsenal`, set a boolean.
 
 That is GameSpice Loadout's own rule for GameSpice Loadout's own reason: **a purchase has to validate without loading anything**, because the validation happens on a server that may not have the content, at boot, in a headless process. It is also why GameSpice Economy imports neither GameSpice Loadout nor GameSpice Combat, and why a game wires them together itself in a few lines.
 
@@ -38,7 +38,7 @@ A buy menu has to grey out what cannot be bought and say why. A menu that reimpl
 
 ### Refunds close with the buy window
 
-Otherwise a player sells their rifle at the end of the round for money they keep, which is not a refund, it is a savings account with extra steps. `refund_within_buy_time` is on, and `DotEconomyRules.validate()` refuses a `refund_ticks` longer than the `buy_time_ticks` it is restricted to.
+Otherwise a player sells their rifle at the end of the round for money they keep, which is not a refund, it is a savings account with extra steps. `refund_within_buy_time` is on, and `GSEconomyRules.validate()` refuses a `refund_ticks` longer than the `buy_time_ticks` it is restricted to.
 
 ### A zero buy time means no timer, not no buying
 
@@ -54,7 +54,7 @@ Not a peer id. GameSpice Moderation exists because a peer id dies with its conne
 
 ## Things deliberately not here
 
-- **No buy menu.** GameSpice UI's rule. `DotShop.for_team()` returns the list, cheapest first, so that every menu drawing it agrees about the order.
+- **No buy menu.** GameSpice UI's rule. `GSShop.for_team()` returns the list, cheapest first, so that every menu drawing it agrees about the order.
 - **No granting.** See above; this is the design.
 - **No persistent currency.** Money here is per match. A currency that survives a disconnect is an account balance and belongs behind an authenticated backbone, which is GameSpice Auth and GameSpice Stats, and a "buy" against one is a transaction, not a game rule.
 - **No per-weapon ammunition economy.** The genre buys ammunition with the gun. A game that wants it declares an item with `requires` set.

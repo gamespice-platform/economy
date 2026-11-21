@@ -1,4 +1,4 @@
-class_name DotEconomyAccount
+class_name GSEconomyAccount
 extends RefCounted
 
 ## One player's money, and what they have spent it on this round.
@@ -15,7 +15,7 @@ var balance: int = 0
 ## What a refund reads and what a "you bought" summary draws.
 var purchases: Array[Dictionary] = []
 
-## Everything held across rounds, per item id, for [member DotShopItem.per_life_limit].
+## Everything held across rounds, per item id, for [member GSShopItem.per_life_limit].
 var held: Dictionary = {}
 
 ## Lifetime figures, for GameSpice Stats and for a scoreboard column.
@@ -98,7 +98,7 @@ func forget_purchase(id: StringName) -> bool:
 
 
 ## [param count] of [param id] are gone from what is held (used, dropped, taken): what
-## [member DotShopItem.per_life_limit] and [member DotShopItem.requires] count. Returns how
+## [member GSShopItem.per_life_limit] and [member GSShopItem.requires] count. Returns how
 ## many were removed.
 func drop_held(id: StringName, count: int = 1) -> int:
 	var have := int(held.get(id, 0))
@@ -137,4 +137,4 @@ func to_wire() -> Dictionary:
 
 
 func _to_string() -> String:
-	return "DotEconomyAccount(%s $%d)" % [key, balance]
+	return "GSEconomyAccount(%s $%d)" % [key, balance]

@@ -1,6 +1,6 @@
 @tool
-class_name DotEconomyRules
-extends DotConfig
+class_name GSEconomyRules
+extends GSConfig
 
 ## Every number in a round-based economy, in one layered configuration.
 ##
@@ -41,7 +41,7 @@ extends DotConfig
 ## What a kill is worth when the weapon does not say.
 ##
 ## The genre prices this per weapon — 300 for a rifle, 100 for a high-calibre sniper
-## rifle, 1500 for a knife — and [DotShopItem.kill_award] is where that lives. This is
+## rifle, 1500 for a knife — and [GSShopItem.kill_award] is where that lives. This is
 ## the fallback.
 @export_range(0, 100000, 1) var kill_award: int = 300
 
@@ -82,7 +82,7 @@ extends DotConfig
 
 ## Whether a player has to be standing in a buy zone.
 ##
-## The game answers [member DotEconomyManager.in_buy_zone_fn]; this only says whether it
+## The game answers [member GSEconomyManager.in_buy_zone_fn]; this only says whether it
 ## is asked. Off for a game with no zones, which is most of them outside this genre.
 @export var require_buy_zone: bool = true
 
@@ -113,10 +113,10 @@ func cli_prefix() -> String:
 	return "--economy-"
 
 
-func validate() -> DotResult:
+func validate() -> GSResult:
 	if start_money > max_money:
-		return DotResult.fail(
-			DotError.CODE_INVALID,
+		return GSResult.fail(
+			GSError.CODE_INVALID,
 			(
 				"Everybody starts with %d against a ceiling of %d, so the first thing "
 				+ "that happens is that everybody loses money."
@@ -124,8 +124,8 @@ func validate() -> DotResult:
 		)
 
 	if loss_bonus_max < loss_bonus_base:
-		return DotResult.fail(
-			DotError.CODE_INVALID,
+		return GSResult.fail(
+			GSError.CODE_INVALID,
 			(
 				"The loss bonus ladder starts at %d and is capped at %d, so it goes "
 				+ "down."
@@ -134,8 +134,8 @@ func validate() -> DotResult:
 
 	if refund_ticks > 0 and buy_time_ticks > 0 and refund_within_buy_time \
 			and refund_ticks > buy_time_ticks:
-		return DotResult.fail(
-			DotError.CODE_INVALID,
+		return GSResult.fail(
+			GSError.CODE_INVALID,
 			(
 				"The refund window (%d) is longer than the buy window (%d) and refunds "
 				+ "are restricted to the buy window, so the last part of it can never "
@@ -143,7 +143,7 @@ func validate() -> DotResult:
 			) % [refund_ticks, buy_time_ticks]
 		)
 
-	return DotResult.success(null)
+	return GSResult.success(null)
 
 
 ## What a team gets for losing, given how many it has lost in a row.

@@ -17,11 +17,11 @@ Read the family [CLAUDE.md](../../CLAUDE.md) first.
 
 | Path | What |
 | --- | --- |
-| `core/dot_economy_rules.gd` | `DotEconomyRules`: every number (balance, awards, loss ladder, buy and refund windows), a layered `DotConfig` |
-| `core/dot_shop_item.gd` | `DotShopItem`: id, price, teams, `kill_award`, per-round and per-life limits, `requires`, `refundable` |
-| `core/dot_shop.gd` | `DotShop`: the catalogue, validated at boot; `for_team()` cheapest first |
-| `core/dot_economy_account.gd` | `DotEconomyAccount`: one player's money and this round's purchases |
-| `runtime/dot_economy_manager.gd` | `DotEconomyManager`: the one node a game holds; `may_buy`, `buy`, `refund`, `award`, round hooks, `to_wire(key)` |
+| `core/dot_economy_rules.gd` | `GSEconomyRules`: every number (balance, awards, loss ladder, buy and refund windows), a layered `GSConfig` |
+| `core/dot_shop_item.gd` | `GSShopItem`: id, price, teams, `kill_award`, per-round and per-life limits, `requires`, `refundable` |
+| `core/dot_shop.gd` | `GSShop`: the catalogue, validated at boot; `for_team()` cheapest first |
+| `core/dot_economy_account.gd` | `GSEconomyAccount`: one player's money and this round's purchases |
+| `runtime/dot_economy_manager.gd` | `GSEconomyManager`: the one node a game holds; `may_buy`, `buy`, `refund`, `award`, round hooks, `to_wire(key)` |
 | `examples/economy_selftest.tscn` | the suite |
 
 Paths except `examples/` are in `addons/dot_economy/`.
