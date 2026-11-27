@@ -2,6 +2,8 @@
 
 A round-based buy economy for Godot 4.7+: money, a shop, a buy window, refunds, kill and round awards, and a loss bonus for a team that keeps losing. Part of the [GameSpice](https://github.com/gamespice-platform) family. It needs only [GameSpice Core](https://github.com/gamespice-platform/core).
 
+GameSpice Economy is a GameSpice addon, MIT licensed and built with Claude Code, tested headless by `res://examples/economy_selftest.tscn`. The games in [Zee's Games](https://zeesgames.com) are built on the GameSpice addons and run on live servers, so the buy rules get used by real players.
+
 Every player has a balance. A round opens a buy window, and players spend money in the shop while it is open, and by default while standing in a buy zone. Kills, round wins and objectives pay out. A purchase can be refunded for a short time.
 
 The shop sells ids. It never hands out weapons or items. When somebody buys something, the `bought` signal fires and your game grants it. A server can therefore check a purchase without loading the item's scenes or models.
@@ -118,9 +120,13 @@ godot --headless --path . res://examples/economy_selftest.tscn
 
 The self-test is offline. It covers balances and the ceiling, the buy window, buy zones, limits, refunds, awards, the loss bonus, half time and the network form of an account. It exits non-zero on any failure.
 
-## Status
+## Used by
 
-Built and maintained with Claude Code. The test suites pass, but little of this has been in front of real players yet. Please report rough edges by opening an issue.
+Only one game vendors it so far.
+
+- [Playlot](https://zeesgames.com/playlot) - the shop
+
+The whole collection is at [zeesgames.com](https://zeesgames.com).
 
 ## Licence
 
